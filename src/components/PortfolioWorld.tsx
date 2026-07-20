@@ -18,11 +18,11 @@ export default function PortfolioWorld() {
 
         preload() {
           // Load vector SVG assets
-          this.load.svg("player", "/assets/character.svg");
-          this.load.svg("about", "/assets/tent.svg");
-          this.load.svg("contact", "/assets/tower.svg");
-          this.load.svg("skills", "/assets/workshop.svg");
-          this.load.svg("projects", "/assets/totem.svg");
+          this.load.svg("player", "/assets/character.svg", { width: 32, height: 32 });
+          this.load.svg("about", "/assets/tent.svg", { width: 64, height: 64 });
+          this.load.svg("contact", "/assets/tower.svg", { width: 64, height: 64 });
+          this.load.svg("skills", "/assets/workshop.svg", { width: 64, height: 64 });
+          this.load.svg("projects", "/assets/totem.svg", { width: 64, height: 64 });
         }
 
         create() {
