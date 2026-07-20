@@ -11,63 +11,40 @@ export default function PortfolioWorld() {
       const Phaser = (await import("phaser")).default;
 
       class MainScene extends Phaser.Scene {
-        player!: Phaser.Physics.Arcade.Sprite;
+        player!: Phaser.Physics.Arcade.Image;
         cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
         wasd!: any;
-        stations!: Array<{ key: string, x: number, y: number, color: number, label: string }>;
+        stations!: Array<{ key: string, x: number, y: number, label: string }>;
 
         preload() {
-          this.load.image("tiles", "/assets/tileset.png");
-          this.load.spritesheet("player", "/assets/character.png", {
-            frameWidth: 32,
-            frameHeight: 32,
-          });
+          // Load vector SVG assets
+          this.load.svg("player", "/assets/character.svg");
+          this.load.svg("about", "/assets/tent.svg");
+          this.load.svg("contact", "/assets/tower.svg");
+          this.load.svg("skills", "/assets/workshop.svg");
+          this.load.svg("projects", "/assets/totem.svg");
         }
 
         create() {
           this.add.rectangle(320, 240, 640, 480, 0x2d3b2e);
 
           this.stations = [
-            { key: "about", x: 100, y: 100, color: 0xe8a33d, label: "Camp Tent" },
-            { key: "projects", x: 540, y: 100, color: 0x4af0a0, label: "Radio Tower" },
-            { key: "skills", x: 100, y: 380, color: 0x6fcf9e, label: "Workshop" },
-            { key: "contact", x: 540, y: 380, color: 0xe8756b, label: "Totem" },
+            { key: "about", x: 100, y: 100, label: "Camp Tent" },
+            { key: "contact", x: 540, y: 100, label: "Radio Tower" },
+            { key: "skills", x: 100, y: 380, label: "Workshop" },
+            { key: "projects", x: 540, y: 380, label: "Totem" },
           ];
 
           this.stations.forEach((s) => {
-            const zone = this.add.rectangle(s.x, s.y, 48, 48, s.color);
+            // Render the SVG image instead of a colored rectangle
+            const zone = this.add.image(s.x, s.y, s.key).setScale(0.8);
             this.physics.add.existing(zone, true);
             (zone as any).stationKey = s.key;
-            this.add.text(s.x - 30, s.y - 40, s.label, { color: '#ffffff', fontSize: '12px' });
+            this.add.text(s.x - 30, s.y - 45, s.label, { color: '#ffffff', fontSize: '12px', fontStyle: 'bold' }).setShadow(1, 1, '#000000', 2);
           });
 
-          this.player = this.physics.add.sprite(320, 240, "player");
+          this.player = this.physics.add.image(320, 240, "player").setScale(1.2);
           this.player.setCollideWorldBounds(true);
-
-          this.anims.create({
-            key: "walk-down",
-            frames: this.anims.generateFrameNumbers("player", { start: 0, end: 2 }),
-            frameRate: 8,
-            repeat: -1,
-          });
-          this.anims.create({
-            key: "walk-up",
-            frames: this.anims.generateFrameNumbers("player", { start: 3, end: 5 }),
-            frameRate: 8,
-            repeat: -1,
-          });
-          this.anims.create({
-            key: "walk-left",
-            frames: this.anims.generateFrameNumbers("player", { start: 6, end: 8 }),
-            frameRate: 8,
-            repeat: -1,
-          });
-          this.anims.create({
-            key: "walk-right",
-            frames: this.anims.generateFrameNumbers("player", { start: 9, end: 11 }),
-            frameRate: 8,
-            repeat: -1,
-          });
 
           this.cursors = this.input.keyboard!.createCursorKeys();
           this.wasd = this.input.keyboard!.addKeys("W,A,S,D");
@@ -76,7 +53,6 @@ export default function PortfolioWorld() {
         update() {
           const speed = 160;
           this.player.setVelocity(0);
-          let moving = false;
 
           const isLeft = this.cursors.left.isDown || this.wasd.A.isDown || controlsRef.current.left;
           const isRight = this.cursors.right.isDown || this.wasd.D.isDown || controlsRef.current.right;
@@ -85,29 +61,22 @@ export default function PortfolioWorld() {
 
           if (isLeft) {
             this.player.setVelocityX(-speed);
-            this.player.anims.play("walk-left", true);
-            moving = true;
+            // Optionally flip the player horizontally when moving left
+            this.player.setFlipX(true);
           } else if (isRight) {
             this.player.setVelocityX(speed);
-            this.player.anims.play("walk-right", true);
-            moving = true;
-          } else if (isUp) {
+            this.player.setFlipX(false);
+          } 
+          
+          if (isUp) {
             this.player.setVelocityY(-speed);
-            this.player.anims.play("walk-up", true);
-            moving = true;
           } else if (isDown) {
             this.player.setVelocityY(speed);
-            this.player.anims.play("walk-down", true);
-            moving = true;
-          }
-
-          if (!moving) {
-            this.player.anims.stop();
           }
 
           this.stations.forEach((s) => {
             const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, s.x, s.y);
-            if (dist < 40) {
+            if (dist < 45) {
               window.dispatchEvent(new CustomEvent("station-enter", { detail: s.key }));
             }
           });

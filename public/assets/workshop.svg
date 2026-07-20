@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Workshop Base -->
+  <rect x="12" y="24" width="40" height="36" fill="#8e44ad" />
+  <!-- Roof -->
+  <polygon points="6,24 58,24 32,8" fill="#2c3e50" />
+  <!-- Door -->
+  <rect x="24" y="40" width="16" height="20" fill="#34495e" />
+  <!-- Window -->
+  <rect x="16" y="32" width="6" height="6" fill="#f1c40f" />
+  <rect x="42" y="32" width="6" height="6" fill="#f1c40f" />
+  <!-- Gear/Tool Icon -->
+  <circle cx="32" cy="18" r="4" fill="#bdc3c7" />
+  <circle cx="32" cy="18" r="2" fill="#2c3e50" />
+</svg>
